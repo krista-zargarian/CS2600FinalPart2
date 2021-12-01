@@ -37,6 +37,7 @@ typedef struct erow {
 
 struct editorConfig {
     int cx, cy;
+    int rowoff;
     int screenrows;
     int screencols;
     int numrows;
@@ -159,12 +160,15 @@ int getWindowSize(int *rows, int *cols){
 
 /*** row operations ***/
 
-void editorAppendRow(char *s, size_t len){
-    E.row.size = len;
-    E.row.chars = malloc(len +1);
-    memcpy(E.row.chars, s, len);
-    E.row.chars[len] = '\0';
-    E.numrows = 1;
+void editorAppendRow(char *s, size_t len) {
+    E.row = realloc(E.row, sizeof(erow) * (E.numrows + 1));
+
+    int at = E.numrows;
+    E.row[at].size = len;
+    E.row[at].chars = malloc(len + 1);
+    memcpy(E.row[at].chars, s, len);
+    E.row[at].chars[len] = '\0';
+    E.numrows++;
 }
 
 /*** file i/o ***/
@@ -177,8 +181,7 @@ void editorOpen(char *filename) {
     char *line = NULL;
     size_t linecap = 0;
     ssize_t linelen;
-    linelen = getline(&line, &linecap, fp);
-    if (linelen != 01) {
+    while ((linelen = getline(&line, &linecap, fp)) != -1) {
         while (linelen > 0 && (line[linelen -1] == '\n' ||
                                line[linelen -1] == '\r'))
         linelen--;
@@ -229,9 +232,9 @@ void editorDrawRows(struct abuf *ab){
                   abAppend(ab, "~", 1);
              }
          } else {
-             int len = E.row.size;
+             int len = E.row[y].size;
              if (len > E.screencols) len = E.screencols;
-             abAppend(ab, E.row.chars, len);
+             abAppend(ab, E.row[y].chars, len);
          }
 
         abAppend(ab, "\x1b[K", 3);
@@ -324,6 +327,7 @@ void editorProcessKeypress(){
 void initEditor(){
     E.cx = 0;
     E.cy = 0;
+    E.rowoff = 0;
     E.numrows = 0;
     E.row = NULL;
 
