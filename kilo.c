@@ -10,7 +10,7 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <termios.h>
-#include <ubistd.h>
+#include <unistd.h>
 
 #define KILO_VERSION "0.0.1"
 
