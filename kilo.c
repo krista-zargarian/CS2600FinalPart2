@@ -70,7 +70,7 @@ void enableRawMode() {
     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP| IXON);
     raw.c_oflag &= ~(OPOST);
     raw.c_cflag |= (CS8);
-    raw.c_lflag &= `(ECHO | ICANON | IEXTEN | ISIG);
+    raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
     raw.c_cc[VMIN] = 0;
     raw.c_cc[VTIME] = 1;
 
@@ -203,9 +203,9 @@ void abAppend(struct abuf *ab, const char *s, int len){
     char *new = realloc(ab->b, ab->len + len);
 
     if (new == NULL) return;
-    memcpy(&new[ab->len}, s, len);
+    memcpy(&new[ab->len], s, len);
     ab->b = new;
-    ab-> += len;)
+    ab-> += len;
 }
 
 void abFree(struct abuf *ab){
@@ -242,7 +242,7 @@ void editorDrawRows(struct abuf *ab){
               }
              while (padding--) abAppend(ab, " ", 1);
              abAppend(ab, welcome, welcomelen);
-              { else {
+              } else {
                   abAppend(ab, "~", 1);
              }
          } else {
