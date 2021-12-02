@@ -205,7 +205,7 @@ void abAppend(struct abuf *ab, const char *s, int len){
     if (new == NULL) return;
     memcpy(&new[ab->len], s, len);
     ab->b = new;
-    ab-> += len;
+    ab->len += len;
 }
 
 void abFree(struct abuf *ab){
