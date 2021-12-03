@@ -348,7 +348,7 @@ void editorDrawStatusBar(struct abuf *ab) {
         if (E.screencols - len == rlen) {
             abAppend(ab, rstatus, rlen);
             break;
-        } else {}
+        } else {
         abAppend(ab, " ", 1);
         len++;
         }
@@ -366,7 +366,7 @@ void editorDrawMessageBar(struct abuf *ab) {
 }
 
 //***output***//
-void editorRefreshScreen(){
+void editorRefreshScreen() {
     editorScroll();
 
     struct abuf ab = ABUF_INIT;
