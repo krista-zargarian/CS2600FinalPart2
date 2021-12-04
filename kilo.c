@@ -36,11 +36,13 @@ enum editorKey {
 
 enum editorHighlight {
     HL_NORMAL = 0,
+    HL_STRING,
     HL_NUMBER,
     HL_MATCH
 };
 
 #define HL_HIGHLIGHT_NUMBERS (1<<0)
+#define HL_HIGHLIGHT_STRINGS (1<<1)
 
 struct termios orig_termios;
 
@@ -85,7 +87,7 @@ struct editorSyntax HLDB[] = {
     {
          "c",
         C_HL_extensions,
-        HL_HIGHLIGHT_NUMBERS
+        HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
     },
 };
 
@@ -220,13 +222,30 @@ void editorUpdateSyntax(erow *row) {
     if (E.syntax == NULL) return;
 
     int prev_sep = 1;
+    int in_string = 0;
 
     int i = 0;
     while (i < row->rsize) {
         char c = row->render[i];
         unsigned char prev_hl = (i > 0) ? row->hl[i - 1] : HL_NORMAL;
 
-        if (E.syntax->flags & HL_HIGHLIGHT_NUMBERS) {
+        if (E.syntax->flags & HL_HIGHLIGHT_STRINGS) {
+            if (in_string) {
+                row->hl[i] = HL_STRING;
+                if (c == in_string) in_string = 0;
+                i++;
+                prev_sep = 1;
+                continue;
+            } else {
+                if (c == '"' || c == '\'') {
+                    in_string = c;
+                    row->hl[i] = HL_STRING;
+                    i++;
+                    continue;
+                }
+            }
+        }
+
             if ((isdigit(c) && (prev_sep || prev_hl == HL_NUMBER)) ||
                 (c == '.' && prev_hl == HL_NUMBER)) {
                 row->hl[i] = HL_NUMBER;
@@ -243,11 +262,42 @@ void editorUpdateSyntax(erow *row) {
 
 int editorSyntaxToColor(int hl) {
     switch (hl) {
+        case HL_STRING: return 35;
         case HL_NUMBER: return 31;
         case HL_MATCH: return 34;
         default: return 37;
     }
 }
+
+void editorSelectSyntaxHighlight() {
+    E.syntax = NULL;
+    if (E.filename == NULL) return;
+
+    char *ext = strrchr(E.filename, '.');
+
+    for (unsigned int j = 0; j < HLDB_ENTRIES; j++) {
+        struct editorSyntax *s = &HLDB[j];
+        unsigned int i = 0;
+        while (s->filematch[j]) {
+            int is_ext = (s->filematch[i][0] == '.');
+            if ((is_ext && ext && !strcmp(ext, s->filematch[i])) ||
+                (!is_ext && strstr(E.filename, s->filematch[i]))) {
+            E.syntax = s;
+
+            int filerow;
+            for (filerow = 0; filerow < E.numrows; filerow++) {
+                editorUpdateSyntax(&E.row[filerow]);
+            }
+
+            return;
+        }
+        i++;
+    }
+ }
+}
+
+
+
 
 /*** row operations ***/
 
@@ -425,6 +475,8 @@ void editorOpen(char *filename) {
     free(E.filename);
     E.filename = strdup(filename);
 
+    editorSelectSyntaxHighlight();
+
     FILE *fp = fopen(filename, "r");
     if (!fp) die("fopen");
 
@@ -449,6 +501,7 @@ void editorSave() {
             editorSetStatusMessage("Save aborted");
             return;
         }
+        editorSelectSyntaxHighlight();
     }
 
     int len;
