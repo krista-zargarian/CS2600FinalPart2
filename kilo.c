@@ -344,6 +344,12 @@ void editorUpdateSyntax(erow *row) {
     i++;
   }
 
+    int changed = (row->hl_open_comment != in_comment);
+    row->hl_open_comment = in_comment;
+    if (changed && row->idx + 1 < E.numrows)
+    editorUpdateSyntax(&E.row[row->idx + 1]);
+}
+
 int editorSyntaxToColor(int hl) {
   switch(hl) {
     case HL_COMMENT:
