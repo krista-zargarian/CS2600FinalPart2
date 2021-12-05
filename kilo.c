@@ -35,14 +35,14 @@ enum editorKey {
 };
 
 enum editorHighlight {
-    HL_NORMAL = 0,
-    HL_COMMENT,
-    HL_MLCOMMENT,
-    HL_KEYWORD1,
-    HL_KEYWORD2,
-    HL_STRING,
-    HL_NUMBER,
-    HL_MATCH
+  HL_NORMAL = 0,
+  HL_COMMENT,
+  HL_MLCOMMENT,
+  HL_KEYWORD1,
+  HL_KEYWORD2,
+  HL_STRING,
+  HL_NUMBER,
+  HL_MATCH
 };
 
 #define HL_HIGHLIGHT_NUMBERS (1<<0)
@@ -349,15 +349,15 @@ void editorUpdateSyntax(erow *row) {
 }
 
 int editorSyntaxToColor(int hl) {
-    switch (hl) {
-        case HL_COMMENT:
-        case HL_MLCOMMENT: return 36;
-        case HL_KEYWORD1: return 33;
-        case HL_KEYWORD2: return 32;
-        case HL_STRING: return 35;
-        case HL_NUMBER: return 31;
-        case HL_MATCH: return 34;
-        default: return 37;
+  switch (hl) {
+    case HL_COMMENT:
+    case HL_MLCOMMENT: return 36;
+    case HL_KEYWORD1: return 33;
+    case HL_KEYWORD2: return 32;
+    case HL_STRING: return 35;
+    case HL_NUMBER: return 31;
+    case HL_MATCH: return 34;
+    default: return 37;
     }
 }
 
@@ -768,11 +768,11 @@ void editorDrawRows(struct abuf *ab){
                      abAppend(ab, "\x1b[7m", 4);
                      abAppend(ab, &sym, 1);
                      abAppend(ab, "\x1b[m", 3);
-                     if (current_color != -1) {
-                         char buf[16];
-                         int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", current_color);
-                         abAppend(ab, buf, clen);
-                     }
+                    if (current_color != -1) {
+                    char buf[16];
+                    int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", current_color);
+                    abAppend(ab, buf, clen);
+                    }
                  } else if (hl[j] == HL_NORMAL) {
                      if (current_color != -1) {
                          abAppend(ab, "\x1b[39m", 5);
