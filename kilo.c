@@ -52,13 +52,13 @@ enum editorHighlight {
 
 /*** data ***/
 struct editorSyntax {
-    char *filetype;
-    char **filematch;
-    char **keywords;
-    char *singleline_comment_start;
-    char *multiline_comment_start;
-    char *multiline_comment_end;
-    int flags;
+  char *filetype;
+  char **filematch;
+  char **keywords;
+  char *singleline_comment_start;
+  char *multiline_comment_start;
+  char *multiline_comment_end;
+  int flags;
 };
 
 typedef struct erow {
@@ -110,6 +110,7 @@ struct editorSyntax HLDB[] = {
     HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
   },
 };
+
 
 #define HLDB_ENTRIES (sizeof(HLDB) / sizeof(HLDB[0]))
 
@@ -268,7 +269,7 @@ void editorUpdateSyntax(erow *row) {
       }
     }
 
-    if (mcs_len && mce_len && !in_string) {
+   if (mcs_len && mce_len && !in_string) {
       if (in_comment) {
         row->hl[i] = HL_MLCOMMENT;
         if (!strncmp(&row->render[i], mce, mce_len)) {
@@ -351,7 +352,7 @@ void editorUpdateSyntax(erow *row) {
 }
 
 int editorSyntaxToColor(int hl) {
-  switch(hl) {
+  switch (hl) {
     case HL_COMMENT:
     case HL_MLCOMMENT: return 36;
     case HL_KEYWORD1: return 33;
