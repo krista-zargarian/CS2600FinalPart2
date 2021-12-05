@@ -1,2 +1,2 @@
 kilo: kilo.c
-	$(CC) kilo.c -o kilo -Wall _Wextra -pedantic -std=c99
+	$(CC) kilo.c -o a.exe -Wall -Wextra -pedantic -std=c99
