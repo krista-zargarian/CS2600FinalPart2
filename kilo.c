@@ -379,12 +379,9 @@ void editorSelectSyntaxHighlight() {
             return;
         }
         i++;
+        }
     }
- }
 }
-
-
-
 
 /*** row operations ***/
 
