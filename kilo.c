@@ -2,6 +2,7 @@
 #define _BSD_SOURCE
 #define _GNU_SOURCE
 
+/***includes ***/
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -15,6 +16,7 @@
 #include <time.h>
 #include <unistd.h>
 
+/*** defines ***/
 #define KILO_VERSION "0.0.1"
 #define KILO_TAB_STOP 8
 #define KILO_QUIT_TIMES 3
@@ -48,8 +50,7 @@ enum editorHighlight {
 #define HL_HIGHLIGHT_NUMBERS (1<<0)
 #define HL_HIGHLIGHT_STRINGS (1<<1)
 
-struct termios orig_termios;
-
+/*** data ***/
 struct editorSyntax {
     char *filetype;
     char **filematch;
@@ -90,8 +91,8 @@ struct editorConfig {
 struct editorConfig E;
 
 /*** filetypes ***/
-
 char *C_HL_extensions[] = { ".c", ".h", ".cpp", NULL };
+
 char *C_HL_keywords[] = {
   "switch", "if", "while", "for", "break", "continue", "return", "else",
   "struct", "union", "typedef", "static", "enum", "class", "case",
@@ -113,11 +114,11 @@ struct editorSyntax HLDB[] = {
 #define HLDB_ENTRIES (sizeof(HLDB) / sizeof(HLDB[0]))
 
 /*** prototypes ***/
-
 void editorSetStatusMessage(const char *fmt, ...);
 void editorRefreshScreen();
 char *editorPrompt(char *prompt, void (*callback)(char *, int));
 
+/*** terminal ***/
 void die (const char *s){
     write(STDOUT_FILENO, "\x1b[2J", 4);
     write(STDOUT_FILENO, "\x1b[H", 3);
@@ -140,6 +141,7 @@ void enableRawMode() {
     raw.c_oflag &= ~(OPOST);
     raw.c_cflag |= (CS8);
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+
     raw.c_cc[VMIN] = 0;
     raw.c_cc[VTIME] = 1;
 
@@ -229,7 +231,6 @@ int getWindowSize(int *rows, int *cols){
 }
 
 /*** syntax highlighting ***/
-
 int is_separator(int c) {
     return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];", c) != NULL;  
 }
@@ -344,7 +345,7 @@ void editorUpdateSyntax(erow *row) {
   }
 
 int editorSyntaxToColor(int hl) {
-  switch (hl) {
+  switch(hl) {
     case HL_COMMENT:
     case HL_MLCOMMENT: return 36;
     case HL_KEYWORD1: return 33;
@@ -384,7 +385,6 @@ void editorSelectSyntaxHighlight() {
 }
 
 /*** row operations ***/
-
 int editorRowCxToRx(erow *row, int cx) {
     int rx = 0;
     int j;
@@ -499,6 +499,7 @@ void editorRowDelChar(erow *row, int at) {
     E.dirty++;
 }
 
+/*** editor operations ***/
 void editorInsertChar(int c){
     if (E.cy == E.numrows) {
         editorInsertRow(E.numrows, "", 0);
@@ -539,7 +540,6 @@ void editorDelChar() {
 }
 
 /*** file i/o ***/
-
 char *editorRowsToString(int *buflen) {
     int totlen = 0;
     int j;
@@ -558,7 +558,6 @@ char *editorRowsToString(int *buflen) {
 
     return buf;
 }
-
 
 void editorOpen(char *filename) {
     free(E.filename);
