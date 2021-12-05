@@ -100,13 +100,13 @@ char *C_HL_keywords[] = {
 };
 
 struct editorSyntax HLDB[] = {
-    {
-         "c",
-        C_HL_extensions,
-        C_HL_keywords,
-        "//", "/*", "*/",
-        HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
-    },
+  {
+    "c",
+    C_HL_extensions,
+    C_HL_keywords,
+    "//", "/*", "*/",
+    HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
+  },
 };
 
 #define HLDB_ENTRIES (sizeof(HLDB) / sizeof(HLDB[0]))
@@ -249,6 +249,7 @@ void editorUpdateSyntax(erow *row) {
   int mcs_len = mcs ? strlen(mcs) : 0;
   int mce_len = mce ? strlen(mce) : 0;
 
+
   int prev_sep = 1;
   int in_string = 0;
   int in_comment = (row->idx > 0 && E.row[row->idx - 1].hl_open_comment);
@@ -337,6 +338,7 @@ void editorUpdateSyntax(erow *row) {
       }
     }
 
+
     prev_sep = is_separator(c);
     i++;
   }
@@ -357,7 +359,7 @@ int editorSyntaxToColor(int hl) {
     case HL_NUMBER: return 31;
     case HL_MATCH: return 34;
     default: return 37;
-    }
+  }
 }
 
 void editorSelectSyntaxHighlight() {
@@ -767,11 +769,11 @@ void editorDrawRows(struct abuf *ab){
                      abAppend(ab, "\x1b[7m", 4);
                      abAppend(ab, &sym, 1);
                      abAppend(ab, "\x1b[m", 3);
-                    if (current_color != -1) {
+                if (current_color != -1) {
                     char buf[16];
                     int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", current_color);
                     abAppend(ab, buf, clen);
-                    }
+                }
                  } else if (hl[j] == HL_NORMAL) {
                      if (current_color != -1) {
                          abAppend(ab, "\x1b[39m", 5);
