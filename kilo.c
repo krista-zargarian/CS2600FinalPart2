@@ -95,6 +95,7 @@ char *C_HL_extensions[] = { ".c", ".h", ".cpp", NULL };
 char *C_HL_keywords[] = {
   "switch", "if", "while", "for", "break", "continue", "return", "else",
   "struct", "union", "typedef", "static", "enum", "class", "case",
+
   "int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|",
   "void|", NULL
 };
@@ -338,16 +339,9 @@ void editorUpdateSyntax(erow *row) {
       }
     }
 
-
     prev_sep = is_separator(c);
     i++;
   }
-
-  int changed = (row->hl_open_comment != in_comment);
-  row->hl_open_comment = in_comment;
-  if (changed && row->idx + 1 < E.numrows)
-    editorUpdateSyntax(&E.row[row->idx + 1]);
-}
 
 int editorSyntaxToColor(int hl) {
   switch (hl) {
